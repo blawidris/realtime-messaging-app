@@ -6,12 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    protected $stopOnFirstFailure = true;
+
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +21,35 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
         ];
+    }
+
+
+    public function messages(): array
+    {
+        return [
+            'firstname.required' => 'First name is required',
+            'lastname.required' => 'Last name is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'Email must be a valid email address',
+            'email.unique' => 'Email is already taken',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password must be at least 8 characters',
+        ];
+    }
+
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'firstname' => trim($this->firstname),
+            'lastname' => trim($this->lastname),
+            'email' => strtolower(trim($this->email)),
+            'password' => trim($this->password),
+        ]);
     }
 }
