@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ConversationController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +31,6 @@ Route::group(['prefix' => 'conversations', "middleware" => 'auth:sanctum'], func
     Route::post("{conversation_id}/messages", [MessageController::class, 'send'])->name('conversations.messages.send');
     Route::post("{conversation_id}/messages/read", [MessageController::class, 'markAsRead'])->name('conversations.messages.read');
 });
+
+
+Route::get("users", [UserController::class, 'index'])->middleware('auth:sanctum')->name("users");
