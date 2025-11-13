@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Services\Chat;
+namespace App\Services;
 
 use App\Models\User;
 use App\Models\Conversation;
 use App\Models\ConversationUser;
+use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -54,6 +55,7 @@ class ConversationService
     public function getConversationsByUser(int $userId): Collection
     {
         return Conversation::with(['users', 'lastMessage'])
+            ->where('created_by', $userId)
             ->whereHas('users', fn($q) => $q->where('user_id', $userId))
             ->orderByDesc('last_message_at')
             ->get();
@@ -65,9 +67,9 @@ class ConversationService
     public function getUserConversations(int $userId, bool $includeArchived = false): Collection
     {
         $query = Conversation::with([
-            'users:id,name,avatar_url',
-            'lastMessage.sender:id,name,avatar_url',
-            'creator:id,name,avatar_url',
+            'users',
+            'lastMessage',
+            'creator',
         ])
             ->where(function ($q) use ($userId) {
                 $q->where('created_by', $userId)
@@ -80,9 +82,18 @@ class ConversationService
             });
         }
 
-        return $query
-            ->orderByDesc('last_message_at')
-            ->orderByDesc('updated_at')
-            ->get();
+        $conversations = $query->orderByDesc('last_message_at')->get();
+
+        // Attach unread message counts
+        $conversations->each(function ($conversation) use ($userId) {
+            $conversation->unread_count = DB::table('message_users')
+                ->join('messages', 'messages.id', '=', 'message_users.message_id')
+                ->where('messages.conversation_id', $conversation->id)
+                ->where('message_users.user_id', $userId)
+                ->whereNull('message_users.read_at')
+                ->count();
+        });
+
+        return $conversations;
     }
 }

@@ -13,7 +13,7 @@ class Conversation extends Model
         'type',
         'name',
         'description',
-        'avatar_url',
+        'avatar',
         'created_by',
         'last_message_at',
     ];

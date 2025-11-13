@@ -41,9 +41,9 @@ class Message extends Model
     }
 
     // Sender
-    public function user()
+    public function sender()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Parent message (for threads/replies)
@@ -78,5 +78,11 @@ class Message extends Model
         return $query->where('conversation_id', $conversation->id)
             ->where('user_id', '!=', $user->id)
             ->where('created_at', '>', $lastRead ?? '1970-01-01');
+    }
+
+    public function status()
+    {
+
+        return $this->hasMany(MessageUser::class);
     }
 }

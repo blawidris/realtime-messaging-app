@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('phone_number')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignIdFor(Status::class)->nullable();
+            $table->foreignIdFor(Status::class)->default(Status::getId('pending'));
             $table->timestamp('last_seen_at')->nullable();
             $table->boolean('is_online')->default(false);
             $table->rememberToken();

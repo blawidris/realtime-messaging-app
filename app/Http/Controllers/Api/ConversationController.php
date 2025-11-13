@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StartConversationRequest;
-use App\Services\Chat\ConversationService;
+use App\Services\ConversationService;
 use App\Traits\Helper;
 use Illuminate\Http\Request;
 
@@ -20,15 +20,15 @@ class ConversationController extends Controller
 
         $conversations = $this->service->getUserConversations($user->id);
 
-        return $this->responseJson(true, 'Conversations retrieved successfully', $conversations);
+        return $this->responseJson(true,  $conversations, 'Conversations retrieved successfully');
     }
 
-    public function createConverstation(StartConversationRequest $request)
+    public function start(StartConversationRequest $request)
     {
         $user = $request->user();
 
         $conversation = $this->service->startConversation($request, $user);
 
-        return $this->responseJson(true, 'Conversation created successfully', $conversation);
+        return $this->responseJson(true, $conversation, 'Conversation created successfully', 201);
     }
 }
