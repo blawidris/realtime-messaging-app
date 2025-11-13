@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 
-Route::post("login", [LoginController::class, 'login']);
-Route::middleware('auth:sanctum')->group(function () {
+
+Route::post("auth/login", [LoginController::class, 'login'])->name('auth.login');
+Route::post("auth/register", [RegisterController::class, 'register'])->name('auth.register');
+Route::get("auth/verify-email/{id}", [RegisterController::class, 'verifyEmail'])->name('auth.register.verify-email');
+
+Route::group(['prefix' => 'auth', "middleware" => 'auth:sanctum'], function () {
     Route::get("logout", [LoginController::class, 'logout']);
-    Route::post("register", [RegisterController::class, 'register']);
-    Route::get("verify-email/{id}/{hash}", [RegisterController::class, 'verifyEmail'])
-        ->name('verification.verify');
 });

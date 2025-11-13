@@ -23,7 +23,9 @@ class LoginController extends Controller
             return $this->responseJson(false, message: $login['message'], statusCode: $login['code']);
         }
 
-        return $this->responseJson(true, $login['data'], 'Login successful', 200);
+        unset($login['status']);
+        
+        return $this->responseJson(true, $login, 'Login successful', 200);
     }
 
     public function logout(Request $request)

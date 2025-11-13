@@ -30,12 +30,10 @@ class LoginService
         $token = $user->createToken('auth_token')->plainTextToken;
 
         $data = [
-            'status' => true,
-            'data ' => [
-                'token' => $token,
-                'user' => $user
-            ],
-            'message' => 'Login successful',
+            'status'    => true,
+            'token' => $token,
+            'user' => $user
+
         ];
 
         $user->update(['is_online' => true, 'last_seen_at' => now()]);

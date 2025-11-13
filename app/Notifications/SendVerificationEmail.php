@@ -55,25 +55,25 @@ class SendVerificationEmail extends Notification implements ShouldQueue
      */
     protected function verificationUrl($notifiable): string
     {
-        return URL::temporarySignedRoute(
-            'verification.verify', // the name of your verification route
-            Carbon::now()->addHours(24),
+        // Base domain for your backend (e.g. from .env)
+        $frontendUrl = config('app.frontend_url');
+
+        // Generate the signed route
+        $temporaryUrl = URL::temporarySignedRoute(
+            'auth.register.verify-email',
+            now()->addHours(24),
             [
-                'id' => $notifiable->getKey(),
+                'id'   => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+
+        // Extract only the signed query string from the temporary URL
+        $query = parse_url($temporaryUrl, PHP_URL_QUERY);
+
+        // Build your custom domain verification link
+        return "{$frontendUrl}/verify-email?{$query}";
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
-    }
+  
 }

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Conversation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,44 +12,28 @@ class NewConversationNotification extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
+    public function __construct(public Conversation $conversation, public $creator) {}
+
+    public function via($notifiable)
     {
-        //
+        return ['mail', 'database'];
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function toMail($notifiable)
     {
-        return ['mail'];
-    }
+        $url = config('app.frontend_url') . "/chat/{$this->conversation->id}";
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
         return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+            ->subject('New Conversation Started')
+            ->line("{$this->creator->name} started a new conversation with you.")
+            ->action('Open Chat', $url);
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable)
     {
         return [
-            //
+            'conversation_id' => $this->conversation->id,
+            'creator' => $this->creator->only(['id', 'name']),
         ];
     }
 }
