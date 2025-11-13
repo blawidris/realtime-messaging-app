@@ -8,7 +8,10 @@ use App\Models\Conversation;
 
 use App\Events\MessageSent;
 use App\Models\Status;
+use App\Models\User;
+use App\Notifications\NewMessageNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class MessageService
 {
@@ -44,6 +47,15 @@ class MessageService
             // broadcast new message event here if needed
             broadcast(new MessageSent($message))->toOthers();
 
+            // send notifications to other users in the conversation if needed
+            $users = $conversation->users()->where('user_id', '!=', $data['user_id'])->get();
+            $creator = User::where('id', $data['user_id']);
+
+            foreach ($users as $user) {
+                // Notification logic here
+                // $user->notify(new \App\Notifications\NewMessageNotification($message));
+                Notification::send($user, new NewMessageNotification($message, $creator));
+            }
 
             return $message->load(['sender', "status"]);
         });
