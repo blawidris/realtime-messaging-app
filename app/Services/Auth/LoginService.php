@@ -38,6 +38,9 @@ class LoginService
             'message' => 'Login successful',
         ];
 
+        $user->update(['is_online' => true, 'last_seen_at' => now()]);
+
+
         return $data;
     }
 
@@ -53,6 +56,8 @@ class LoginService
 
         // Revoke all tokens for the user
         $user->tokens()->delete();
+
+        $user->update(['is_online' => false]);
 
         return true;
     }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique(); // For idempotency
             $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); //sender id
             $table->foreignId('parent_id')->nullable()->constrained('messages')->onDelete('cascade'); // For replies/threads
             $table->text('content')->nullable();
             $table->string('type')->default('text');
@@ -27,7 +27,6 @@ return new class extends Migration
             $table->index(['conversation_id', 'created_at']);
             $table->index('user_id');
             $table->index('uuid');
-            $table->fullText(['content']); // Fo
         });
     }
 

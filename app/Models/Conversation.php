@@ -3,29 +3,41 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Conversation extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'type',
         'name',
         'description',
         'avatar_url',
         'created_by',
-        'last_message_at'
+        'last_message_at',
     ];
 
     protected $casts = [
         'last_message_at' => 'datetime',
     ];
 
-    // Users/members in conversation
+    // All users (active members)
     public function users()
     {
-        return $this->belongsToMany(User::class, 'conversation_user')
-            ->withPivot(['role', 'joined_at', 'left_at', 'last_read_at', 'last_read_message_id', 'is_archived', 'is_pinned'])
+        return $this->belongsToMany(User::class, 'conversation_users')
+            ->withPivot([
+                'role', 'joined_at', 'left_at', 'last_read_at',
+                'last_read_message_id', 'is_archived', 'is_pinned'
+            ])
             ->withTimestamps()
             ->wherePivotNull('left_at');
+    }
+
+    // Creator of conversation
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     // All messages
@@ -40,46 +52,39 @@ class Conversation extends Model
         return $this->hasOne(Message::class)->latestOfMany();
     }
 
-    // Creator
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
     // Admins only
     public function admins()
     {
-        return $this->belongsToMany(User::class, 'conversation_user')
+        return $this->belongsToMany(User::class, 'conversation_users')
             ->wherePivot('role', 'admin')
             ->wherePivotNull('left_at');
     }
 
-    // Helper: Is user a member?
+    // Check if a user is a member
     public function hasMember(User $user): bool
     {
         return $this->users()->where('user_id', $user->id)->exists();
     }
 
-    // Helper: Get or create one-to-one conversation
+    // Helper for one-to-one conversations
     public static function findOrCreateOneToOne(User $user1, User $user2): self
     {
-        return self::where('type', 'private')
-            ->whereHas('users', function ($q) use ($user1) {
-                $q->where('user_id', $user1->id);
-            })
-            ->whereHas('users', function ($q) use ($user2) {
-                $q->where('user_id', $user2->id);
-            })
-            ->first() ?? self::createOneToOne($user1, $user2);
-    }
+        $existing = self::where('type', 'private')
+            ->whereHas('users', fn($q) => $q->where('user_id', $user1->id))
+            ->whereHas('users', fn($q) => $q->where('user_id', $user2->id))
+            ->first();
 
-    private static function createOneToOne(User $user1, User $user2): self
-    {
-        $conversation = self::create(['type' => 'private']);
+        if ($existing) {
+            return $existing;
+        }
+
+        $conversation = self::create(['type' => 'private', 'created_by' => $user1->id]);
+
         $conversation->users()->attach([
             $user1->id => ['role' => 'member', 'joined_at' => now()],
             $user2->id => ['role' => 'member', 'joined_at' => now()],
         ]);
+
         return $conversation;
     }
 }
