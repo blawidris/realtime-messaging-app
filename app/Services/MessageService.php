@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\MessageRead;
 use App\Models\Message;
 use App\Models\Conversation;
 
@@ -46,5 +47,43 @@ class MessageService
 
             return $message->load(['sender', "status"]);
         });
+    }
+
+    public function markMessagesAsRead(int|string $conversationId, int|string $userId)
+    {
+        $conversation = Conversation::with(['messages' => fn($q) => $q->orderBy('created_at')])
+            ->findOrFail($conversationId);
+
+        $user = $conversation->users()->where('user_id', $userId)->firstOrFail();
+
+        // Get all unread messages for this user
+        $unreadMessageIds = $conversation->messages()
+            ->whereHas('messageUsers', fn($q) => $q->where('user_id', $userId)->whereNull('read_at'))
+            ->pluck('id');
+
+        $lastUnreadId = $unreadMessageIds->last() ?? null;
+
+        if ($unreadMessageIds->isNotEmpty()) {
+            // Mark messages as read in message_users table
+            DB::table('message_users')
+                ->whereIn('message_id', $unreadMessageIds)
+                ->where('user_id', $userId)
+                ->update(['read_at' => now(), 'status_id' => Status::getId('read')]);
+
+            // Update conversation_user pivot with last read info
+            $conversation->users()->updateExistingPivot($userId, [
+                'last_read_at' => now(),
+                'last_read_message_id' => $lastUnreadId,
+            ]);
+
+            // Broadcast event to other participants
+            broadcast(new MessageRead(
+                $conversation->id,
+                $lastUnreadId,
+                $user
+            ))->toOthers();
+        }
+
+        return $lastUnreadId; // Optionally return the last read message ID
     }
 }

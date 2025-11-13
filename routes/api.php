@@ -21,6 +21,12 @@ Route::post("auth/logout", [LoginController::class, 'logout'])->middleware('auth
 Route::group(['prefix' => 'conversations', "middleware" => 'auth:sanctum'], function () {
     Route::get("", [ConversationController::class, 'index'])->name('conversations.index');
     Route::post("start", [ConversationController::class, 'start'])->name('conversations.start');
+    Route::get("{conversation_id}", [ConversationController::class, 'show'])->name('conversations.show');
+    Route::match(['put', 'patch'], "{conversation_id}", [ConversationController::class, 'update'])->name('conversations.update');
+    Route::delete("{conversation_id}", [ConversationController::class, 'destroy'])->name('conversations.destroy');
+
+    // messages routes
     Route::get("{conversation_id}/messages", [MessageController::class, 'index'])->name('conversations.messages.index');
     Route::post("{conversation_id}/messages", [MessageController::class, 'send'])->name('conversations.messages.send');
+    Route::post("{conversation_id}/messages/read", [MessageController::class, 'markAsRead'])->name('conversations.messages.read');
 });

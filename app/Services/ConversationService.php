@@ -96,4 +96,57 @@ class ConversationService
 
         return $conversations;
     }
+
+
+    public function getConversationDetails(int $conversationId): Conversation
+    {
+        $conversations = Conversation::with([
+            'users',
+            'creator',
+            'messages' => fn($q) => $q->with(['sender', 'status'])->orderBy('created_at'),
+        ])->findOrFail($conversationId);
+
+
+        return $conversations;
+    }
+
+
+    public function updateConversation(int $conversationId, array $data): Conversation
+    {
+        $conversation = Conversation::findOrFail($conversationId);
+
+        $conversation->update($data);
+
+        return $conversation->load(['users', 'creator']);
+    }
+
+    public function deleteConversation(int $conversationId, int $userId): void
+    {
+        $conversation = Conversation::with('users')->findOrFail($conversationId);
+
+        // Authorization: only creator or admin can delete
+        $isAuthorized = $conversation->created_by === $userId ||
+            $conversation->users()
+            ->wherePivot('user_id', $userId)
+            ->wherePivot('role', 'admin')
+            ->exists();
+
+        if (! $isAuthorized) {
+            abort(403, 'You are not authorized to delete this conversation.');
+        }
+
+        DB::transaction(function () use ($conversation) {
+            // Option 1: If Conversation model uses SoftDeletes
+            $conversation->delete();
+
+            // Option 2: If you want to permanently delete (cleanup)
+            // MessageUser::whereIn('message_id', $conversation->messages()->pluck('id'))->delete();
+            // $conversation->messages()->delete();
+            // $conversation->users()->detach();
+            // $conversation->forceDelete();
+
+            // Broadcast event for real-time sync
+            broadcast(new \App\Events\ConversationDeleted($conversation->id))->toOthers();
+        });
+    }
 }

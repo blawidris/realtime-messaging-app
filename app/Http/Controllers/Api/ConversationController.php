@@ -31,4 +31,31 @@ class ConversationController extends Controller
 
         return $this->responseJson(true, $conversation, 'Conversation created successfully', 201);
     }
+
+
+    public function show(Request $request, int $conversation_id)
+    {
+        $user = $request->user();
+
+        $conversation = $this->service->getConversationDetails($conversation_id);
+
+        return $this->responseJson(true, $conversation, 'Conversation details retrieved successfully');
+    }
+
+    public function update(StartConversationRequest $request, int $conversation_id)
+    {
+        // Update conversation details logic here
+        $updatedConversation = $this->service->updateConversation($conversation_id, $request->validated());
+
+        return $this->responseJson(true, $updatedConversation, 'Conversation updated successfully');
+    }
+
+    public function destroy(Request $request, int $conversation_id)
+    {
+        $user = $request->user();
+
+        $this->service->deleteConversation($conversation_id, $user->id);
+
+        return $this->responseJson(true, null, 'Conversation deleted successfully');
+    }
 }

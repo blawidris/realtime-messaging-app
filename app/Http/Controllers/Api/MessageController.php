@@ -44,10 +44,12 @@ class MessageController extends Controller
         return $this->responseJson(true, $message, 'Message sent successfully', 201);
     }
 
-    public function uploadAttachment(AttachementRequest $request)
+    public function markAsRead(Request $request, int $conversation_id)
     {
-        $request->validate([
-            'attachment' => 'required|file|max:10240', // max 10MB
-        ]);
+        $userId = $request->user()->id;
+
+        $this->service->markMessagesAsRead($conversation_id, $userId);
+
+        return $this->responseJson(true, null, 'Messages marked as read successfully');
     }
 }
