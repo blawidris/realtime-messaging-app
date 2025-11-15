@@ -18,6 +18,11 @@ Route::post("auth/login", [LoginController::class, 'login'])->name('auth.login')
 Route::post("auth/register", [RegisterController::class, 'register'])->name('auth.register');
 Route::get("auth/verify-email/{id}", [RegisterController::class, 'verifyEmail'])->name('auth.register.verify-email');
 Route::post("auth/logout", [LoginController::class, 'logout'])->middleware('auth:sanctum')->name('auth.logout');
+Route::get('auth/me', function (Request $request) {
+    $user = $request->user();
+
+    return response()->json($user, 200);
+})->middleware('auth:sanctum');
 
 Route::group(['prefix' => 'conversations', "middleware" => 'auth:sanctum'], function () {
     Route::get("", [ConversationController::class, 'index'])->name('conversations.index');

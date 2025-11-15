@@ -14,35 +14,98 @@ use Illuminate\Support\Collection;
 
 class ConversationService
 {
+    // public function startConversation(Request $request, User $creator): Conversation
+    // {
+    //     $attributes = $request->validated();
+
+    //     return DB::transaction(function () use ($attributes, $creator) {
+    //         $isGroup = ($attributes['type'] ?? 'private') === 'group'
+    //             || count($attributes['participant_ids']) > 1;
+
+    //         $conversation = Conversation::create([
+    //             'name' => $isGroup ? ($attributes['name'] ?? 'New Group') : null,
+    //             'created_by' => $creator->id,
+    //             'description' => $attributes['description'] ?? null,
+    //             'avatar' => $attributes['avatar'] ?? null,
+    //             'type' => $isGroup ? 'group' : 'private',
+    //         ]);
+
+    //         $userIds = array_unique(array_merge($attributes['participant_ids'], [$creator->id]));
+
+    //         foreach ($userIds as $userId) {
+    //             ConversationUser::create([
+    //                 'conversation_id' => $conversation->id,
+    //                 'user_id' => $userId,
+    //                 'role' => ($isGroup && $userId === $creator->id) ? 'admin' : 'member',
+    //                 'joined_at' => now(),
+    //             ]);
+    //         }
+
+    //         // Notify participants except creator
+    //         $recipients = User::whereIn('id', $attributes['participant_ids'])
+    //             ->where('id', '!=', $creator->id)
+    //             ->get();
+
+    //         Notification::send($recipients, new NewConversationNotification($conversation, $creator));
+
+    //         return $conversation->load(['users', 'creator']);
+    //     });
+    // }
+
     public function startConversation(Request $request, User $creator): Conversation
     {
         $attributes = $request->validated();
+        $participantIds = $attributes['participant_ids'];
+        $type = $attributes['type'] ?? 'private';
 
-        return DB::transaction(function () use ($attributes, $creator) {
-            $isGroup = ($attributes['type'] ?? 'private') === 'group'
-                || count($attributes['participant_ids']) > 1;
+        return DB::transaction(function () use ($attributes, $creator, $participantIds, $type) {
 
+            // -------------------------------------------------------
+            // 1. CHECK FOR EXISTING PRIVATE CONVERSATION
+            // -------------------------------------------------------
+            if ($type === 'private' && count($participantIds) === 1) {
+
+                $otherUserId = $participantIds[0];
+
+                // Find private conversation with BOTH users
+                $existingConversation = Conversation::where('type', 'private')
+                    ->whereHas('users', fn($q) => $q->where('user_id', $creator->id))
+                    ->whereHas('users', fn($q) => $q->where('user_id', $otherUserId))
+                    ->first();
+
+                if ($existingConversation) {
+                    return $existingConversation->load(['users', 'creator']);
+                }
+            }
+
+            // Detect group mode
+            $isGroup = $type === 'group' || count($participantIds) > 1;
+
+            // -------------------------------------------------------
+            // 2. CREATE NEW CONVERSATION
+            // -------------------------------------------------------
             $conversation = Conversation::create([
-                'name' => $isGroup ? ($attributes['name'] ?? 'New Group') : null,
-                'created_by' => $creator->id,
+                'name'        => $isGroup ? ($attributes['name'] ?? 'New Group') : null,
+                'created_by'  => $creator->id,
                 'description' => $attributes['description'] ?? null,
-                'avatar' => $attributes['avatar'] ?? null,
-                'type' => $isGroup ? 'group' : 'private',
+                'avatar'      => $attributes['avatar'] ?? null,
+                'type'        => $isGroup ? 'group' : 'private',
             ]);
 
-            $userIds = array_unique(array_merge($attributes['participant_ids'], [$creator->id]));
+            // Attach users
+            $userIds = array_unique(array_merge($participantIds, [$creator->id]));
 
             foreach ($userIds as $userId) {
                 ConversationUser::create([
                     'conversation_id' => $conversation->id,
-                    'user_id' => $userId,
-                    'role' => ($isGroup && $userId === $creator->id) ? 'admin' : 'member',
-                    'joined_at' => now(),
+                    'user_id'         => $userId,
+                    'role'            => ($isGroup && $userId === $creator->id) ? 'admin' : 'member',
+                    'joined_at'       => now(),
                 ]);
             }
 
-            // Notify participants except creator
-            $recipients = User::whereIn('id', $attributes['participant_ids'])
+            // Notify participants except creator  
+            $recipients = User::whereIn('id', $participantIds)
                 ->where('id', '!=', $creator->id)
                 ->get();
 
@@ -51,6 +114,7 @@ class ConversationService
             return $conversation->load(['users', 'creator']);
         });
     }
+
 
     public function getConversationsByUser(int $userId): Collection
     {
