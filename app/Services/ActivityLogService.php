@@ -14,10 +14,9 @@ class ActivityLogService
         ?User $user = null,
         array $properties = []
     ): ActivityLog {
-        $user = $user ?? auth()->user();
+        $user = $user ?? request()->user();
 
         return ActivityLog::create([
-            'tenant_id' => $subject->tenant_id ?? null,
             'project_id' => $this->getProjectId($subject),
             'user_id' => $user?->id,
             'subject_type' => get_class($subject),

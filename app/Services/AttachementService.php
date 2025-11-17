@@ -32,7 +32,6 @@ class AttachmentService
         );
 
         $attachment = Attachment::create([
-            'tenant_id' => $user->currentTenant->id,
             'attachable_type' => get_class($attachable),
             'attachable_id' => $attachable->id,
             'user_id' => $user->id,
@@ -56,7 +55,7 @@ class AttachmentService
         // Delete physical file
         Storage::disk($attachment->disk)->delete($attachment->path);
 
-        $this->activityLog->log('deleted_attachment', $attachment->attachable, auth()->user(), [
+        $this->activityLog->log('deleted_attachment', $attachment->attachable, request()->user(), [
             'description' => "Deleted file: {$attachment->filename}",
         ]);
 

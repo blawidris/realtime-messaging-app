@@ -16,12 +16,10 @@ return new class extends Migration
             $table->morphs('commentable'); // tasks, projects, etc.
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('cascade');
-            $table->text('content');
+            $table->longText('content');
             $table->json('mentions')->nullable(); // Array of mentioned user IDs
             $table->timestamps();
             $table->softDeletes();
-
-            $table->index(['commentable_type', 'commentable_id']);
         });
     }
 

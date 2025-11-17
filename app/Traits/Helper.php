@@ -26,4 +26,22 @@ trait Helper
             'message' => $message,
         ], $statusCode);
     }
+
+    public function extractPaginated($records)
+    {
+        $data = $records->items();
+        $meta = [
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+            'per_page'     => $records->perPage(),
+            'total'        => $records->total(),
+            'from'         => $records->firstItem(),
+            'to'           => $records->lastItem(),
+        ];
+
+        return [
+            $data,
+            $meta
+        ];
+    }
 }

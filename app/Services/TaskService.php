@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Priority;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Status;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,6 +18,42 @@ class TaskService
         private NotificationService $notificationService
     ) {}
 
+
+    public function paginated(Request $request)
+    {
+
+        $query = Task::with(['status', 'priority', 'creator', 'assignees', 'project']);
+
+        // Filters
+        if ($request->query("project")) {
+            $query->forProject(Project::getId($request->project));
+        }
+
+        if ($request->query('status')) {
+            $query->where('status_id', Status::getId($request->status));
+        }
+
+        if ($request->query('priority')) {
+            $query->where('priority_id', Priority::getId($request->priority));
+        }
+
+        if ($request->assigned_to_me) {
+            $query->assignedTo(request()->id());
+        }
+
+        if ($request->overdue) {
+            $query->overdue();
+        }
+
+        if ($request->search) {
+            $query->where('title', 'like', "%{$request->search}%");
+        }
+
+        $tasks = $query->ordered()->paginate($request->per_page ?? 50);
+
+        return $tasks;
+    }
+
     public function createTask(array $data, User $creator): Task
     {
         return DB::transaction(function () use ($data, $creator) {
@@ -25,7 +63,6 @@ class TaskService
                 ->max('position') ?? 0;
 
             $task = Task::create([
-                'tenant_id' => $creator->currentTenant->id,
                 'project_id' => $data['project_id'],
                 'parent_task_id' => $data['parent_task_id'] ?? null,
                 'title' => $data['title'],

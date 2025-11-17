@@ -57,7 +57,7 @@ class User extends Authenticatable
     }
 
 
-    public function getFullName(): Attribute
+    public function fullName(): Attribute
     {
         return Attribute::get(function () {
             return "{$this->firstname} {$this->lastname}";

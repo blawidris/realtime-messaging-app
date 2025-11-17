@@ -3,15 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Project extends Model
 {
 
     protected $fillable = [
-        'parent_id', 'created_by', 'name', 
-        'slug', 'description', 'status_id', 'start_at', 
-        'due_at', 'metadata'
+        'parent_id',
+        'created_by',
+        'name',
+        'slug',
+        'description',
+        'status_id',
+        'start_at',
+        'due_at',
+        'metadata'
     ];
 
     protected $casts = [
@@ -19,6 +27,13 @@ class Project extends Model
         'start_at' => 'datetime',
         'due_at' => 'datetime',
     ];
+
+    public static function getId($name)
+    {
+        $project = self::where('name', $name)->first();
+
+        return $project ? $project->id : null;
+    }
 
     public function parent()
     {
@@ -95,5 +110,15 @@ class Project extends Model
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

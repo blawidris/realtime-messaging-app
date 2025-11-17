@@ -5,21 +5,39 @@ namespace App\Services;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Status;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 class ProjectService
 {
-    public function __construct() {}
+    public function __construct(protected ActivityLogService $activityLog) {}
+
+
+    public function paginated(Request $request)
+    {
+
+        $statusId = Status::getId($request->status);
+        $search = $request->query('q');
+        $perPage = $request->query("per_page", 15);
+
+        $projects = Project::with(['status', 'creator', 'members'])
+            ->when($statusId, fn($q) => $q->where('status_id', $statusId))
+            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+            ->latest()
+            ->paginate($perPage);
+
+        return $projects;
+    }
 
     public function createProject(array $data, User $creator): Project
     {
         return DB::transaction(function () use ($data, $creator) {
             $project = Project::create([
-                'tenant_id' => $creator->currentTenant->id,
                 'created_by' => $creator->id,
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,
+                'slug' => $data['slug'] ?? null,
                 'status_id' => $data['status_id'] ?? Status::getDefault('project'),
                 'start_at' => $data['start_at'] ?? null,
                 'due_at' => $data['due_at'] ?? null,
@@ -31,27 +49,29 @@ class ProjectService
             $project->addMember($creator, 'manager');
 
             // Log activity
-            // $this->activityLog->log('created', $project, $creator, [
-            //     'description' => "Created project: {$project->name}",
-            // ]);
+            $this->activityLog->log('created', $project, $creator, [
+                'description' => "Created project: {$project->name}",
+            ]);
 
             return $project->load(['creator', 'status', 'members']);
         });
     }
 
-    public function updateProject(Project $project, array $data): Project
+    public function updateProject(Project $project, array $data, ?User $user =  null): Project
     {
-        return DB::transaction(function () use ($project, $data) {
+        return DB::transaction(function () use ($project, $data, $user) {
             $oldValues = $project->only(['name', 'description', 'status_id', 'due_at']);
+
+            $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 
             $project->update($data);
 
             // Log activity
-            // $this->activityLog->log('updated', $project, auth()->user(), [
-            //     'description' => "Updated project: {$project->name}",
-            //     'old' => $oldValues,
-            //     'new' => $project->only(array_keys($oldValues)),
-            // ]);
+            $this->activityLog->log('updated', $project, $user, [
+                'description' => "Updated project: {$project->name}",
+                'old' => $oldValues,
+                'new' => $project->only(array_keys($oldValues)),
+            ]);
 
             // Clear cache
             $this->clearProjectCache($project);

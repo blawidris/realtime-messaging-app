@@ -17,7 +17,7 @@ class Task extends Model
         'status_id',
         'priority_id',
         'created_by',
-        'order',
+        'position',
         'estimated_hours',
         'actual_hours',
         'due_at',
@@ -41,10 +41,28 @@ class Task extends Model
     {
         return $this->belongsTo(Task::class, 'parent_task_id');
     }
+
     public function subtasks()
     {
         return $this->hasMany(Task::class, 'parent_task_id');
     }
+
+    public function progress()
+    {
+        $total = $this->subtasks()->count();
+
+        if ($total === 0) {
+            return 0; // no subtasks, no progress
+        }
+
+        $completed = $this->subtasks()
+            ->where('status_id', Status::getId('completed'))
+            ->count();
+
+        // return progress as percentage (0–100)
+        return ($completed / $total) * 100;
+    }
+
 
     public function creator(): BelongsTo
     {
@@ -54,6 +72,11 @@ class Task extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class);
+    }
+
+    public function priority(): BelongsTo
+    {
+        return $this->belongsTo(Priority::class);
     }
 
     public function assignees(): BelongsToMany
@@ -87,7 +110,7 @@ class Task extends Model
     public function scopeOverdue($query)
     {
         return $query->where('due_at', '<', now())
-            ->whereHas('status', fn($q) => $q->where('is_closed', false));
+            ->whereHas('status', fn($q) => $q->where('slug', 'overdue'));
     }
 
     public function scopeByStatus($query, $statusId)
@@ -113,14 +136,14 @@ class Task extends Model
 
     public function isCompleted(): bool
     {
-        return $this->status->is_closed;
+        return $this->status->slug == 'completed';
     }
 
     public function assignTo(User $user, ?User $assignedBy = null): void
     {
         $this->assignees()->attach($user->id, [
             'assigned_at' => now(),
-            'assigned_by' => $assignedBy?->id ?? auth()?->id(),
+            'assigned_by' => $assignedBy?->id,
         ]);
     }
 
