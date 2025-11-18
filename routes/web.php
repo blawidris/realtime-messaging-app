@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientController;
 
 
 Route::get('/', [PageController::class, 'signin']);
+Route::get('success', [PageController::class, 'successful']);
 Route::get('/signup', [PageController::class, 'signup']);
 Route::get('/forgot-password', [PageController::class, 'forgotPassword']);
 Route::get('/verify-email', [PageController::class, 'verifyEmail']);
