@@ -133,10 +133,17 @@
 
             function validateInput(input) {
                 const rule = validationRules[input.name];
-                // For country, the error message should be on the parent div of the search input
-                const errorEl = input.name === 'country' ?
-                    document.getElementById('country-search').parentElement.querySelector('p') :
-                    input.parentElement.nextElementSibling;
+
+                // FIX: Get error element correctly for all field types
+                let errorEl;
+                if (input.name === 'country') {
+                    // For country field, get error from country-search parent
+                    errorEl = document.getElementById('country-search').closest('div').querySelector('p.text-red-500');
+                } else {
+                    // For other fields, find the closest parent div and get its error paragraph
+                    const parentDiv = input.closest('div');
+                    errorEl = parentDiv.querySelector('p.text-red-500');
+                }
 
                 let isValid = true;
                 let errorMessage = '';
@@ -174,7 +181,8 @@
 
             function checkFormValidity() {
                 // Use hidden country input for validation check
-                const allInputs = [...inputs, document.getElementById('country-hidden')];
+                const countryHidden = document.getElementById('country-hidden');
+                const allInputs = [...inputs.filter(inp => inp.id !== 'country-search'), countryHidden];
                 const isFormValid = allInputs.every(validateInput);
                 submitButton.disabled = !isFormValid;
             }
@@ -183,7 +191,10 @@
                 if (e.target.tagName === 'INPUT' && e.target.type !== 'hidden') {
                     validateInput(e.target);
                     if (e.target.name === 'password') {
-                        validateInput(signupForm.querySelector('[name="confirm_password"]'));
+                        const confirmPasswordInput = signupForm.querySelector('[name="confirm_password"]');
+                        if (confirmPasswordInput.value) {
+                            validateInput(confirmPasswordInput);
+                        }
                     }
                     checkFormValidity();
                 }
@@ -191,7 +202,7 @@
 
             signupForm.addEventListener('submit', (event) => {
                 event.preventDefault();
-                checkFormValidity(); // Final check on submit
+                checkFormValidity();
                 if (!submitButton.disabled) {
                     console.log('Form submitted successfully!');
                     // Redirect to the verification page
@@ -250,7 +261,7 @@
                         countrySearch.value = country;
                         countryHiddenInput.value = country;
                         countryDropdown.classList.add('hidden');
-                        validateInput(countryHiddenInput); // Validate on selection
+                        validateInput(countryHiddenInput);
                         checkFormValidity();
                     });
                     countryDropdown.appendChild(li);
