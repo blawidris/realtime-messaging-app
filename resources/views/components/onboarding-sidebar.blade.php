@@ -11,7 +11,7 @@
             <div class="relative w-40 h-48 bg-gradient-to-br from-red-400 to-pink-500 rounded-xl overflow-hidden shadow-2xl">
                 <img src="{{ asset('images/dare.png') }}" alt="Dare" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-red-400 opacity-20"></div>
-                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-40 backdrop-blur-sm">
+                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-10 backdrop-blur-sm">
                     <div class="flex items-center space-x-1">
                         <p class="text-white text-sm font-semibold">Dare</p>
                         <svg class="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,11 +23,11 @@
             </div>
         </div>
         <!-- Talent Card: Freda -->
-        <div class="profile-card absolute top-[3.5rem] right-0 transform translate-x-1/4 -translate-y-1/4 transition-transform duration-500 hover:scale-110">
-            <div class="relative w-40 h-48 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl overflow-hidden shadow-2xl">
+        <div class="profile-card absolute top-[3.5rem] -right-6 transform translate-x-1/4 -translate-y-1/4 transition-transform duration-500 hover:scale-110">
+            <div class="relative w-40 h-48 bg-gradient-to-br from-cyan-400 to-primary rounded-xl overflow-hidden shadow-2xl">
                 <img src="{{ asset('images/dzifa.png') }}" alt="Freda" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-cyan-400 opacity-20"></div>
-                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-40 backdrop-blur-sm">
+                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-10 backdrop-blur-sm">
                     <div class="flex items-center space-x-1">
                         <p class="text-white text-sm font-semibold">Freda</p>
                         <svg class="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -43,7 +43,7 @@
             <div class="relative w-44 h-44 bg-gradient-to-br from-purple-400 to-indigo-600  w-32 h-40 rounded-xl overflow-hidden shadow-2xl">
                 <img src="{{ asset('images/neula.png') }}" alt="Nuella" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-purple-400 opacity-20"></div>
-                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-40 backdrop-blur-sm">
+                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-10 backdrop-blur-sm">
                     <div class="flex items-center space-x-1">
                         <p class="text-white text-sm font-semibold">Nuella</p>
                         <svg class="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
