@@ -4,65 +4,119 @@
         @include('components.onboarding-sidebar')
     </x-slot:sidebar>
 
-    <div class="flex items-center justify-center h-screen">
+    <div class="flex flex-col h-screen ">
 
-        <div class="w-full max-w-xl px-8 lg:px-0">
+        <a href=".." class="inline-flex items-center gap-4 pt-10 pl-5 sm:pl-10 cursor-pointer">
+            <div class="rounded-full items-center size-8 flex flex-col justify-center border border-muted">
+                <i class="bi bi-arrow-left-short text-3xl text-muted font-medium"></i>
+            </div>
+            <span>Back</span>
+        </a>
 
-            <h1 class="text-3xl font-bold text-black font-vietnam">Welcome Back!</h1>
-            <p class="text-gray-500 mt-2">
-                Log in to continue where you left off. We’re glad to have you here.
-            </p>
+        <div class="flex items-center justify-center h-full">
 
-            <!-- Form -->
-            <form class="mt-8 space-y-6">
+            <div class="w-full max-w-2xl px-5 sm:px-8 lg:px-0">
 
-                <!-- Email Field -->
-                <div class="space-y-2">
-                    <label class="block text-muted mb-1 text-sm">Email address</label>
-                    <input
-                        type="email"
-                        placeholder="Enter your email"
-                        class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <div class="inline-flex sm:items-center sm:justify-center w-full flex-col">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-black font-vietnam">Join As A Client Or Candidate</h1>
+                    <p class="text-gray-500 mt-2 sm:text-center">
+                        Help us tailor your setup by choosing your account type.
+                    </p>
                 </div>
 
-                <!-- Password Field -->
-                <div class="space-y-2">
-                    <label class="block text-muted mb-1 text-sm">Password</label>
-                    <input
-                        type="password"
-                        placeholder="Enter password"
-                        class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
-                </div>
+                <!-- Form -->
+                <form class="mt-8 grid sm:grid-cols-2 gap-x-4">
 
-                <!-- Remember + Forgot Password -->
-                <div class="flex items-center justify-between text-sm">
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">First name</label>
+                        <input
+                            type="text"
+                            name="firstname"
+                            placeholder="e.g francis"
+                            required
+                            class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    </div>
 
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" class="w-4 h-4 rounded border-gray-400">
-                        <span class="text-black text-sm">Remember me</span>
-                    </label>
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Last name</label>
+                        <input
+                            type="text"
+                            name="lastname"
+                            placeholder="e.g Doe"
+                            required
+                            class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    </div>
 
-                    <a href="/forget-password" class="text-sm text-primary font-medium hover:underline">
-                        Forgot Password?
-                    </a>
-                </div>
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Company Name</label>
+                        <input
+                            type="text"
+                            name="company_name"
+                            placeholder="e.g Doe"
+                            required
+                            class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    </div>
 
-                <!-- Login Button -->
-                <button
-                    type="submit"
-                    class="w-full py-3 bg-gradient-to-r from-[#68A3FF] to-primary text-white rounded-xl font-semibold shadow hover:opacity-90 transition">
-                    Login
-                </button>
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Country</label>
 
-                <!-- Create Account -->
-                <p class="mt-4 text-center text-black text-sm">
-                    Don’t have an account?
-                    <a href="/signup" class="text-primary font-semibold hover:underline">
-                        Create account
-                    </a>
-                </p>
+                        <select name="country" placeholder="e.g United State" id="country" class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <option>Select Country</option>
+                        </select>
+                    </div>
 
-            </form>
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="e.g francis@mail.com"
+                            required
+                            class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    </div>
+
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Company Website</label>
+                        <input
+                            type="text"
+                            name="company_website"
+                            placeholder="eg. www.google.com"
+                            required
+                            class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    </div>
+
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Password</label>
+                        <div class="inline-flex items-center w-full">
+                            <input
+                                type="password"
+                                placeholder="password"
+                                class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <span id="passwordToggler" class="cursor-pointer"><i class="bi bi-eye-fill text-muted text-base -ml-8"></i></span>
+
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-4 sm:mb-6">
+                        <label class="block text-muted mb-1 text-sm">Confirm password</label>
+                        <div class="inline-flex items-center w-full">
+                            <input
+                                type="password"
+                                placeholder="Confirm password"
+                                class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <span id="passwordToggler" class="cursor-pointer"><i class="bi bi-eye-fill text-muted text-base -ml-8"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Send code Button -->
+                    <button
+                        onclick="window.location.href = '/verify-email'"
+                        type="button"
+                        class="mt-10 w-full py-3 bg-gradient-to-r from-[#68A3FF] to-primary text-white rounded-xl font-semibold shadow hover:opacity-90 transition col-span-2">
+                        Create Account
+                    </button>
+                </form>
+            </div>
         </div>
 
     </div>

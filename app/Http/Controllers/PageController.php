@@ -30,4 +30,9 @@ class PageController extends Controller
     {
         return view("auths.reset-password");
     }
+
+    public function setupClient()
+    {
+        return view("onboarding.client.setup-form");
+    }
 }

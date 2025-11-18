@@ -6,7 +6,7 @@
 
     <div class="flex flex-col h-screen ">
 
-        <a href=".." class="inline-flex items-center gap-4 pt-10 pl-5 sm:pl-10">
+        <a href=".." class="inline-flex items-center gap-4 pt-10 pl-5 sm:pl-10 cursor-pointer">
             <div class="rounded-full items-center size-8 flex flex-col justify-center border border-muted">
                 <i class="bi bi-arrow-left-short text-3xl text-muted font-medium"></i>
             </div>
