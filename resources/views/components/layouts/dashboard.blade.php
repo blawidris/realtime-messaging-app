@@ -46,19 +46,19 @@
 
 <body class="bg-[#FAFAFA] font-vietnam text-sm antialiased">
 
-    <div class="flex min-h-screen">
+    <div class="sm:h-screen sm:flex basis-full grow sm:overflow-hidden">
 
         {{-- Sidebar --}}
         @include("components.app-sidebar")
 
         {{-- Main Content Wrapper --}}
-        <main id="content" class="transition-all duration-300 flex-1 h-full overflow-y-auto">
+        <main id="content" class="transition-all duration-300 flex-1 h-full sm:grow overflow-y-auto scrollbar-thin flex flex-col">
 
             {{-- Header with Breadcrumbs --}}
             <x-breadcrumbs :title="$title" />
 
             {{-- Page Content --}}
-            <div class="p-8">
+            <div class="px-4 sm:p-8">
                 <h1 class="text-3xl font-medium text-black mb-10">{{ $title }}</h1>
 
                 {{ $slot }}

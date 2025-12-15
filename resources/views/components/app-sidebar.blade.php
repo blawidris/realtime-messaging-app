@@ -143,7 +143,7 @@ return request()->is($pattern?? trim($href, '/')) ? 'text-primary bg-[#F8FCFF] f
     </nav>
 
     <!-- Back to Website Button -->
-    <div class="mt-10 max-w-[14rem] mx-auto" id="backButton">
+    <div class="my-5 max-w-[14rem] mx-auto" id="backButton">
         <x-button variant="primary" class="w-full px-6 py-3.5" size="sm" onclick="alert('Button clicked!')">
             <span class="link-text back-text">Back to website</span>
             <i class="fas fa-arrow-left back-icon hidden"></i>

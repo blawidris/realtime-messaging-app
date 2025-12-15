@@ -17,7 +17,7 @@
     <div class="relative bg-white rounded-xl shadow-xl w-full max-w-{{$maxWidth}}">
         {{-- Header --}}
         @isset($header)
-        <div class="flex items-center justify-between px-6 py-4 border-b w-full">
+        <div class="flex items-center justify-between px-6 py-4 w-full">
             <h3 class="text-lg font-semibold">{{ $header }}</h3>
 
             <button @click="{{ $show }} = false" class="size-10 rounded-full bg-gray-[#CCCCCC1A] hover:bg-gray-[#CCCCCC] flex items-center justify-center cursor-pointer">
@@ -33,7 +33,7 @@
 
         {{-- Footer --}}
         @isset($footer)
-        <div class="px-6 py-4 border-t flex justify-end gap-3">
+        <div class="px-6 py-4 flex justify-end gap-3">
             {{ $footer }}
         </div>
         @endisset

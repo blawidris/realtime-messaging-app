@@ -1,6 +1,6 @@
 <x-layouts.dashboard :title="'Payments and billings'">
     <div x-data="{ showTopup: false }">
-        <div class="grid sm:grid-cols-2 mb-10">
+        <div class="grid sm:grid-cols-2 mb-10 gap-6">
 
             <!-- Wallet Balance Card -->
             <div class="bg-gradient-to-br from-[#68A3FF] to-[#407BFF] text-white rounded-3xl pt-8 relative overflow-hidden flex flex-col justify-center">
@@ -19,7 +19,7 @@
                 </div>
                 <!-- Bottom Section -->
                 <div class="bg-white/10 px-8 flex flex-col flex-1 sm:flex-row items-center z-10">
-                    <div class="flex items-center justify-between w-full">
+                    <div class="flex lg:items-center justify-between w-full flex-col lg:flex-row gap-4">
                         <button @click="showTopup = true" class="bg-primary-dark text-white transition px-6 py-4 rounded-xl font-medium backdrop-blur-md w-full sm:max-w-[12rem]">
                             + Top up
                         </button>
@@ -41,7 +41,7 @@
                 <div class="bg-white rounded-3xl shadow-[0_0_25px_rgba(0,0,0,0.08)] p-8 flex-1 relative">
 
                     <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 py-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 py-6">
 
                         <!-- Active Payment Methods -->
                         <div class="flex items-start gap-3">

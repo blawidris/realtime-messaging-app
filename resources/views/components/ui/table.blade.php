@@ -16,10 +16,10 @@
     class="bg-white rounded-xl border border-gray-200 py-10">
 
     {{-- Header --}}
-    <div class="flex items-center justify-end px-6 py-4 border-b border-gray-100 gap-5">
+    <div class="flex items-center sm:justify-end px-6 py-4 border-b border-gray-100 gap-5 flex-wrap sm:flex-nowrap">
         <div class="flex items-center gap-4">
             @if($showSearch)
-            <div class="relative w-72">
+            <div class="relative w-full sm:w-72">
                 <input
                     x-model.debounce.500ms="search"
                     type="text"
