@@ -16,3 +16,7 @@ Route::get('/verify-email', [PageController::class, 'verifyEmail']);
 Route::get('/reset-password', [PageController::class, 'resetPassword']);
 
 Route::get("/client/setup", [PageController::class, "setupClient"]);
+Route::get("candidate/setup", [PageController::class, 'talentOnboarding']);
+
+Route::get("/payments-and-bills", [PageController::class, 'paymentBills']);
+
