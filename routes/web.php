@@ -19,4 +19,6 @@ Route::get("/client/setup", [PageController::class, "setupClient"]);
 Route::get("candidate/setup", [PageController::class, 'talentOnboarding']);
 
 Route::get("/payments-and-bills", [PageController::class, 'paymentBills']);
+Route::get("/topup", [PageController::class, 'paymentTopup']);
 
+Route::post('/form-step/{step}', [PageController::class, 'formStep']);

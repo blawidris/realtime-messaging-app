@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <link
+        href="https://cdn.quilljs.com/1.3.7/quill.snow.css"
+        rel="stylesheet" />
+
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -39,6 +44,7 @@
     </script>
 
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 
 
     @stack('styles')
@@ -69,6 +75,41 @@
     </div>
 
     {{-- Page Specific JS --}}
+    <script>
+        function quillEditor() {
+            return {
+                quill: null,
+                aboutLength: 0,
+
+                init() {
+                    this.quill = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        placeholder: 'Enter Text Here...',
+                        modules: {
+                            toolbar: [
+                                ['bold', 'italic', 'underline'],
+                                [{
+                                    list: 'ordered'
+                                }, {
+                                    list: 'bullet'
+                                }],
+                                ['clean'],
+                            ],
+                        },
+                    });
+
+                    // Sync content to hidden input
+                    this.quill.on('text-change', () => {
+                        const html = this.quill.root.innerHTML;
+                        const text = this.quill.getText().trim();
+
+                        this.aboutLength = text.length;
+                        this.$refs.bio.value = html;
+                    });
+                },
+            };
+        }
+    </script>
     @stack('scripts')
 
 </body>

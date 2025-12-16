@@ -9,10 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+    <link
+        href="https://cdn.quilljs.com/1.3.7/quill.snow.css"
+        rel="stylesheet" />
 
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 
     <!-- Tailwind Config (optional) -->
@@ -62,7 +67,7 @@
         <div class="flex min-h-screen">
             @isset($sidebar)
             <!-- <aside class="hidden lg:flex w-1/2 starry-background text-white p-12 flex-col justify-between relative overflow-hidden"> -->
-                {{ $sidebar }}
+            {{ $sidebar }}
             <!-- </aside> -->
             @endisset
 
@@ -76,7 +81,46 @@
 
     </main>
 
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+
     {{-- Custom JS injected per page --}}
+
+    <script>
+        function quillEditor() {
+            return {
+                quill: null,
+                aboutLength: 0,
+
+                init() {
+                    this.quill = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        placeholder: 'Enter Text Here...',
+                        modules: {
+                            toolbar: [
+                                ['bold', 'italic', 'underline'],
+                                [{
+                                    list: 'ordered'
+                                }, {
+                                    list: 'bullet'
+                                }],
+                                ['clean'],
+                            ],
+                        },
+                    });
+
+                    // Sync content to hidden input
+                    this.quill.on('text-change', () => {
+                        const html = this.quill.root.innerHTML;
+                        const text = this.quill.getText().trim();
+
+                        this.aboutLength = text.length;
+                        this.$refs.bio.value = html;
+                    });
+                },
+            };
+        }
+    </script>
     @stack('scripts')
 
     {{-- Livewire scripts (enable later) --}}

@@ -168,4 +168,30 @@ class PageController extends Controller
             "cards" => $cards,
         ]);
     }
+
+    public function paymentTopup(Request $request)
+    {
+        $amout = $request->query("amount") ?? 0;
+        $charges = $amout * 0.02;
+        $total = $amout + $charges;
+
+        return view('payment.topup', [
+            "pageTitle" => "Top up - Payment",
+            'total' => $total,
+            'charges' => $charges,
+            'amount' => $amout,
+        ]);
+    }
+
+    public function formStep($step, Request $request)
+    {
+        $data = $request->all();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Step {$step} data saved successfully.",
+            'data' => $data,
+            'step' => $step + 1,
+        ]);
+    }
 }

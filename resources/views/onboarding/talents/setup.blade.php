@@ -14,6 +14,11 @@
                 <div class=" p-8 lg:p-12 w-full max-w-5xl mx-auto">
 
                     @include("onboarding.talents.steps.personal-information")
+                    @include("onboarding.talents.steps.profile-overview")
+                    @include("onboarding.talents.steps.professional-information")
+                    @include("onboarding.talents.steps.employment-history")
+                    @include("onboarding.talents.steps.education-history")
+                    @include("onboarding.talents.steps.preference-compliance")
                 </div>
             </div>
 
@@ -43,11 +48,16 @@
         }
 
         // Submit step via AJAX (fetch)
-        function submitStep(step) {
+        function submitStep(event, step) {
+            event.preventDefault(); // 👈 stops page refresh
+
             let form;
             if (step === 1) form = document.getElementById('step1Form');
             if (step === 2) form = document.getElementById('step2Form');
             if (step === 3) form = document.getElementById('step3Form');
+            if (step === 4) form = document.getElementById('step4Form');
+            if (step === 5) form = document.getElementById('step5Form');
+            if (step === 6) form = document.getElementById('step6Form');
 
             // Frontend validation
             if (!form.checkValidity()) {
@@ -55,26 +65,29 @@
                 return;
             }
 
-            // Prepare data
             const formData = new FormData(form);
 
-            // AJAX POST to Laravel endpoint
             fetch(`/form-step/${step}`, {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        "Accept": "application/json",
+
                     }
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
+
+                    console.log("Response from step " + step + ":", data);
+                    if (data.status === "success") {
                         if (currentStep < totalSteps) {
                             currentStep++;
+
+                            console.log("Moving to step:", currentStep);
                             showStep(currentStep);
                         } else {
                             alert("Form successfully submitted!");
-                            // Optional: redirect or reset form
                         }
                     } else {
                         alert("Error: " + data.message);
@@ -82,6 +95,7 @@
                 })
                 .catch(err => console.error(err));
         }
+
 
         // Initialize
         showStep(currentStep);
