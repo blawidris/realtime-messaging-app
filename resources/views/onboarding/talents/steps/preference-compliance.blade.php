@@ -144,7 +144,7 @@
                 type="submit"
                 variant="primary"
                 class="w-full max-w-xs"
-                :disabled="!agreeTerms">
+                disabled="!agreeTerms">
                 Complete Registration
             </x-button>
         </div>

@@ -247,8 +247,12 @@
 
             signupForm.addEventListener('submit', (event) => {
                 event.preventDefault();
+
+                console.log(selectedAccount )
                 if (selectedAccount == 'client') {
                     window.location.href = '/client/setup'
+
+                    return;
                     // alert(`Creating account as: ${selectedAccount}`);
                     // In a real application, you would make an API call here.
                 }

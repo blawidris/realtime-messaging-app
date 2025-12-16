@@ -51,8 +51,10 @@
 
                     <div>
                         <label class="text-sm text-gray-500">Location</label>
-                        <x-ui.location-selector :name="`education[${index}][location]`"
-                            x-model="edu.location" />
+                        <x-ui.location-selector
+                            name-prefix="education"
+                            index="__INDEX__" />
+
                         <!-- <select
                             :name="`education[${index}][location]`"
                             x-model="edu.location"

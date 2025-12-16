@@ -1,97 +1,68 @@
-{{-- resources/views/components/radical-button.blade.php --}}
-
 @props([
-'type' => 'button',
-'size' => 'md',
-'variant' => 'primary',
-'onclick' => null,
+    'type' => 'button',
+    'size' => 'md',
+    'variant' => 'primary',
+    'disabled' => false,
 ])
 
 @php
-$sizeClasses = [
-'sm' => 'px-4 py-2 text-sm',
-'md' => 'px-6 py-3 text-base',
-'lg' => 'px-8 py-4 text-lg',
+$baseClasses = implode(' ', [
+    'inline-flex items-center justify-center font-medium rounded-xl',
+    'transition-all duration-200',
+    'focus:outline-none focus:ring-2 focus:ring-offset-2',
+    'disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100',
+]);
+
+$sizes = [
+    'sm' => 'px-4 py-2 text-sm',
+    'md' => 'px-6 py-3 text-base',
+    'lg' => 'px-8 py-4 text-lg',
 ];
 
-$variantClass = match($variant) {
-'primary' => 'btn-primary',
-'danger' => 'btn-danger',
-'outlined' => 'btn-outlined',
-default => 'btn-primary',
-};
+$variants = [
+    'primary' => implode(' ', [
+        'text-white',
+        'bg-[radial-gradient(circle,_#58A3FF_0%,_#407BFF_100%)]',
+        'border border-black/10',
+        'shadow-[0_4px_7px_-5px_#828282,_0_0_2px_#E7E7E7]',
+        'hover:shadow-[0_6px_12px_-5px_#828282,_0_0_4px_#E7E7E7]',
+        'active:scale-[0.98]',
+        'focus:ring-primary/50',
+    ]),
 
-$baseClasses = 'flex items-center justify-center font-medium rounded-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50';
+    'danger' => implode(' ', [
+        'text-white',
+        'bg-[radial-gradient(circle,_#FF466D_0%,_#D80027_100%)]',
+        'border border-black/10',
+        'shadow-[0_4px_7px_-5px_#828282,_0_0_2px_#E7E7E7]',
+        'hover:shadow-[0_6px_12px_-5px_#828282,_0_0_4px_#E7E7E7]',
+        'active:scale-[0.98]',
+        'focus:ring-red-500/40',
+    ]),
+
+    'outlined' => implode(' ', [
+        'text-gray-800',
+        'bg-transparent',
+        'border border-gray-300',
+        'shadow-[0_4px_7px_-5px_#828282,_0_0_2px_#E7E7E7]',
+        'hover:bg-gray-100',
+        'hover:shadow-[0_6px_12px_-5px_#828282,_0_0_4px_#E7E7E7]',
+        'active:scale-[0.98]',
+        'focus:ring-gray-400/40',
+    ]),
+];
+
+$classes = implode(' ', [
+    $baseClasses,
+    $sizes[$size] ?? $sizes['md'],
+    $variants[$variant] ?? $variants['primary'],
+]);
 @endphp
 
 <button
     type="{{ $type }}"
-    @if($onclick) onclick="{{ $onclick }}" @endif
-    {{ $attributes->merge([
-        'class' => "$variantClass $baseClasses {$sizeClasses[$size]}"
-    ]) }}>
+    {{ $disabled ? 'disabled aria-disabled=true' : '' }}
+    {{ $attributes->merge(['class' => $classes]) }}
+>
     {{ $slot }}
 </button>
-
-<style>
-    /* Primary Variant - Radial Gradient (Blue) */
-    .btn-primary {
-        background: radial-gradient(circle, #58A3FF 0%, #407BFF 100%);
-        border: 1px solid #333333/20;
-        color: white;
-        box-shadow:
-            0px 4px 7px -5px #828282,
-            0px 0px 2px 0px #E7E7E7;
-    }
-
-    .btn-primary:hover {
-        box-shadow:
-            0px 6px 12px -5px #828282,
-            0px 0px 4px 0px #E7E7E7;
-    }
-
-    .btn-primary:active {
-        transform: scale(0.98);
-    }
-
-    /* Danger Variant - Red Gradient */
-    .btn-danger {
-        background: radial-gradient(circle, #FF466D 0%, #D80027 100%);
-      
-        color: white;
-        box-shadow:
-            0px 4px 7px -5px #828282,
-            0px 0px 2px 0px #E7E7E7;
-    }
-
-    .btn-danger:hover {
-        box-shadow:
-            0px 6px 12px -5px #828282,
-            0px 0px 4px 0px #E7E7E7;
-    }
-
-    .btn-danger:active {
-        transform: scale(0.98);
-    }
-
-    /* Outlined Variant - Transparent with Border */
-    .btn-outlined {
-        background: transparent;
-        border: 1px solid #333333;
-        color: #333333;
-        box-shadow:
-            0px 4px 7px -5px #828282,
-            0px 0px 2px 0px #E7E7E7;
-    }
-
-    .btn-outlined:hover {
-        background: rgba(51, 51, 51, 0.05);
-        box-shadow:
-            0px 6px 12px -5px #828282,
-            0px 0px 4px 0px #E7E7E7;
-    }
-
-    .btn-outlined:active {
-        transform: scale(0.98);
-    }
-</style>
