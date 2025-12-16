@@ -1,84 +1,243 @@
 @section('title', 'Professional Information - Remoteli')
 
-<div class="step">
+<div class="step max-w-5xl mx-auto space-y-10">
 
-
-    <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Professional Information</h2>
-        <p class="text-gray-500">Share your skills and professional expertise.</p>
+    {{-- Header --}}
+    <div class="w-full">
+        <h2 class="text-3xl font-semibold text-black">
+            Professional Information
+        </h2>
+        <p class="text-muted text-base sm:text-lg mt-2">
+            Highlight your desired positions, skills and proficiency.
+        </p>
     </div>
 
-    <form id="step3Form" method="POST" class="space-y-6" onsubmit="submitStep(event, 3); return false;">
+    <form
+        id="step3Form"
+        method="POST"
+        class="space-y-8"
+        onsubmit="submitStep(event, 3); return false;">
         @csrf
 
-        <!-- Years of Experience -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
-            <select name="years_of_experience" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition @error('years_of_experience') border-red-500 @enderror" required>
-                <option value="">Select experience level</option>
-                <option value="0-1" {{ old('years_of_experience') == '0-1' ? 'selected' : '' }}>0-1 years</option>
-                <option value="1-3" {{ old('years_of_experience') == '1-3' ? 'selected' : '' }}>1-3 years</option>
-                <option value="3-5" {{ old('years_of_experience') == '3-5' ? 'selected' : '' }}>3-5 years</option>
-                <option value="5-10" {{ old('years_of_experience') == '5-10' ? 'selected' : '' }}>5-10 years</option>
-                <option value="10+" {{ old('years_of_experience') == '10+' ? 'selected' : '' }}>10+ years</option>
-            </select>
-            @error('years_of_experience')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+        {{-- Desired Positions --}}
+        <div
+            x-data="dynamicList({ title: '', experience: '' })"
+            class="space-y-4">
+            <h3 class="text-sm font-medium text-black">
+                Desired Positions
+            </h3>
+
+            <template x-for="(item, index) in items" :key="index">
+                <div class="border border-[#EBEDF0] rounded-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end px-4 py-5 md:place-items-center">
+                    <div class="w-full">
+                        <label class="text-xs text-muted">Position</label>
+                        <input
+                            type="text"
+                            :name="`positions[${index}][title]`"
+                            x-model="item.title"
+                            class="w-full mt-1 px-4 py-3 border rounded-lg focus:ring-0 focus:border-gray-400"
+                            placeholder="e.g. Frontend Developer">
+                    </div>
+
+                    <div class="w-full">
+                        <label class="text-xs text-muted">Experience</label>
+                        <select
+                            :name="`positions[${index}][experience]`"
+                            x-model="item.experience"
+                            class="w-full mt-1 px-4 py-3 border rounded-lg">
+                            <option value="">Select</option>
+                            <option>0–1 years</option>
+                            <option>2–4 years</option>
+                            <option>5+ years</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-flex items-center gap-2 py-3">
+
+                        <button
+                            type="button"
+                            x-show="items.length > 1"
+                            @click="remove(index)"
+                            class="text-danger text-xl hover:underline w-auto">
+                            <i class="bi bi-x"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="add"
+                            class="flex items-center gap-2 text-primary text-sm font-medium">
+                            <i class="bi bi-plus"></i>
+                            Add Another Position
+                        </button>
+                    </div>
+                </div>
+            </template>
+
+
         </div>
 
-        <!-- Primary Skills -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Primary Skills</label>
-            <textarea name="primary_skills" rows="3" placeholder="e.g., JavaScript, React, Node.js, Python (separate with commas)"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition @error('primary_skills') border-red-500 @enderror" required>{{ old('primary_skills') }}</textarea>
-            @error('primary_skills')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+        {{-- Key Skills --}}
+        <div
+            x-data="dynamicList({ name: '', experience: '' })"
+            class="space-y-4">
+            <h3 class="text-sm font-medium text-black">
+                Your Key Skills
+            </h3>
+
+            <template x-for="(item, index) in items" :key="index">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end px-4 py-5 border border-[#EBEDF0] rounded-xl md:place-items-center">
+                    <div class="w-full">
+                        <label class="text-xs text-muted">Skill</label>
+                        <input
+                            type="text"
+                            :name="`skills[${index}][name]`"
+                            x-model="item.name"
+                            class="w-full mt-1 px-4 py-3 border rounded-lg"
+                            placeholder="e.g. React">
+                    </div>
+
+                    <div class="w-full">
+                        <label class="text-xs text-muted">Experience</label>
+                        <select
+                            :name="`skills[${index}][experience]`"
+                            x-model="item.experience"
+                            class="w-full mt-1 px-4 py-3 border rounded-lg">
+                            <option value="">Select</option>
+                            <option>Beginner</option>
+                            <option>Intermediate</option>
+                            <option>Expert</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-flex items-center gap-2 py-3">
+                        <button
+                            type="button"
+                            x-show="items.length > 1"
+                            @click="remove(index)"
+                            class="text-danger text-xl hover:underline w-auto">
+                            <i class="bi bi-x"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="add"
+                            class="flex items-center gap-2 text-primary text-sm font-medium">
+                            <i class="bi bi-plus"></i>
+                            Add Another Skill
+                        </button>
+
+                    </div>
+                </div>
+            </template>
+
+
         </div>
 
-        <!-- Industry -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
-            <select name="industry" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition @error('industry') border-red-500 @enderror" required>
-                <option value="">Select industry</option>
-                <option value="Technology" {{ old('industry') == 'Technology' ? 'selected' : '' }}>Technology</option>
-                <option value="Finance" {{ old('industry') == 'Finance' ? 'selected' : '' }}>Finance</option>
-                <option value="Healthcare" {{ old('industry') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
-                <option value="Education" {{ old('industry') == 'Education' ? 'selected' : '' }}>Education</option>
-                <option value="Marketing" {{ old('industry') == 'Marketing' ? 'selected' : '' }}>Marketing</option>
-                <option value="Other" {{ old('industry') == 'Other' ? 'selected' : '' }}>Other</option>
-            </select>
-            @error('industry')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+        {{-- Software & Tools --}}
+        <div
+            x-data="{ open: true }"
+            class="space-y-4">
+            <button
+                type="button"
+                @click="open = !open"
+                class="w-full flex justify-between items-center text-sm font-medium text-black">
+                Software and Tools Proficiency
+                <i
+                    class="bi "
+                    :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+            </button>
+
+            <div x-show="open" x-transition>
+                <div
+                    x-data="dynamicList({ tool: '', level: '' })"
+                    class="space-y-4">
+                    <template x-for="(item, index) in items" :key="index">
+                        <div class="border border-[#EBEDF0] rounded-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end md:place-items-center p-4">
+                            <div class="w-full">
+                                <label class="text-xs text-muted">Software or Tool</label>
+                                <input
+                                    type="text"
+                                    :name="`tools[${index}][name]`"
+                                    x-model="item.tool"
+                                    class="w-full mt-1 px-4 py-3 border rounded-lg">
+                            </div>
+
+                            <div class="w-full">
+                                <label class="text-xs text-muted">Proficiency</label>
+                                <select
+                                    :name="`tools[${index}][level]`"
+                                    x-model="item.level"
+                                    class="w-full mt-1 px-4 py-3 border rounded-lg">
+                                    <option value="">Select</option>
+                                    <option>Beginner</option>
+                                    <option>Intermediate</option>
+                                    <option>Advanced</option>
+                                </select>
+                            </div>
+
+                            <div class="inline-flex items-center gap-2 py-3">
+
+                                <button
+                                    type="button"
+                                    x-show="items.length > 1"
+                                    @click="remove(index)"
+                                    class="text-danger text-xl hover:underline w-auto">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="add"
+                                    class="flex items-center gap-2 text-primary text-sm font-medium">
+                                    <i class="bi bi-plus"></i>
+                                    Add Another Skill
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+
+
+                </div>
+            </div>
         </div>
 
-        <!-- Certifications -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Certifications (Optional)</label>
-            <textarea name="certifications" rows="3" placeholder="List any relevant certifications"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">{{ old('certifications') }}</textarea>
-        </div>
-
-        <!-- Languages -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Languages</label>
-            <input type="text" name="languages" value="{{ old('languages') }}" placeholder="e.g., English (Fluent), Spanish (Intermediate)"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition @error('languages') border-red-500 @enderror" required>
-            @error('languages')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="flex gap-4 pt-4 justify-end ">
-         
-            <x-button type="button" class="w-full max-w-[14rem] border-[#33333333]" variant="outlined" onclick="prevStep()">
+        {{-- Actions --}}
+        <div class="flex justify-end gap-6 pt-6">
+            <x-button
+                type="button"
+                variant="outlined"
+                class="w-full max-w-[14rem]"
+                onclick="prevStep()">
                 Back
             </x-button>
-            <x-button type="submit" class="w-full max-w-xs" variant="primary">
+
+            <x-button
+                type="submit"
+                variant="primary"
+                class="w-full max-w-xs">
                 Continue
             </x-button>
         </div>
     </form>
 </div>
+
+@push("scripts")
+
+<script>
+    function dynamicList(template) {
+        return {
+            items: [{
+                ...template
+            }],
+
+            add() {
+                this.items.push({
+                    ...template
+                });
+            },
+            remove(index) {
+                this.items.splice(index, 1);
+            },
+        };
+    }
+</script>
+@endpush

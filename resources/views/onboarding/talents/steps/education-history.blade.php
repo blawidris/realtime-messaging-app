@@ -1,128 +1,186 @@
 @section('pageTitle', 'Education History - Remoteli')
 
-<div class="step">
-
-    <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Education History</h2>
-        <p class="text-gray-500">Share your educational qualifications.</p>
+<div
+    class="step max-w-5xl mx-auto space-y-10"
+    x-data="educationHistory()">
+    {{-- Header --}}
+    <div>
+        <h2 class="text-3xl font-semibold text-black">
+            Educational History
+        </h2>
+        <p class="text-muted text-base sm:text-lg mt-1">
+            Showcase your educational achievements and relevant training.
+        </p>
     </div>
 
-    <form id="step5Form" onsubmit="submitStep(event, 5); return false;" method="POST" class="space-y-6">
+    <form
+        id="step5Form"
+        method="POST"
+        class="space-y-8"
+        @submit.prevent="submitStep(event, 5)">
         @csrf
 
-        <div id="educationContainer">
-            <div class="education-entry border-2 border-gray-200 rounded-xl p-6 mb-4">
-                <h4 class="font-semibold text-gray-800 mb-4">Education #1</h4>
+        <!-- Education entries -->
+        <template x-for="(edu, index) in education" :key="index">
+            <div class="p-6 space-y-6">
 
-                <div class="space-y-4">
+                <!-- Institution -->
+                <div>
+                    <label class="text-sm text-gray-500">
+                        Name of Institution or Website
+                    </label>
+                    <input
+                        type="text"
+                        :name="`education[${index}][institution]`"
+                        x-model="edu.institution"
+                        class="mt-1 w-full px-4 py-3 border rounded-lg">
+                </div>
+
+                <!-- Course / Location -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Degree/Certification</label>
-                        <input type="text" name="education[0][degree]" placeholder="e.g., Bachelor of Science in Computer Science"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
+                        <label class="text-sm text-gray-500">Course</label>
+
+                        <input
+                            type="text"
+                            :name="`education[${index}][course]`"
+                            x-model="edu.course"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Institution Name</label>
-                        <input type="text" name="education[0][institution]"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Start Year</label>
-                            <input type="number" name="education[0][start_year]" min="1950" max="2025"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">End Year</label>
-                            <input type="number" name="education[0][end_year]" min="1950" max="2030"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                            <label class="flex items-center mt-2">
-                                <input type="checkbox" name="education[0][is_current]" class="mr-2">
-                                <span class="text-sm text-gray-600">Currently studying</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
-                        <input type="text" name="education[0][field_of_study]"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        <label class="text-sm text-gray-500">Location</label>
+                        <x-ui.location-selector :name="`education[${index}][location]`"
+                            x-model="edu.location" />
+                        <!-- <select
+                            :name="`education[${index}][location]`"
+                            x-model="edu.location"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+                            <option value="">Select</option>
+                            <option>Onsite</option>
+                            <option>Remote</option>
+                            <option>Hybrid</option>
+                        </select> -->
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <button type="button" onclick="addEducation()" class="w-full border-2 border-dashed border-gray-300 text-gray-600 font-semibold py-3 rounded-xl hover:border-blue-500 hover:text-blue-500 transition">
-            + Add Another Education
+                <!-- Dates -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm text-gray-500">Start Date</label>
+                        <input
+                            type="month"
+                            :name="`education[${index}][start_date]`"
+                            x-model="edu.start_date"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-gray-500">End Date</label>
+                        <input
+                            type="month"
+                            :name="`education[${index}][end_date]`"
+                            x-model="edu.end_date"
+                            :disabled="edu.current"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg disabled:bg-gray-100">
+
+                        <label class="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                            <input
+                                type="checkbox"
+                                :name="`education[${index}][current]`"
+                                x-model="edu.current">
+                            Studying presently
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div>
+                    <label class="text-sm text-gray-500">Results</label>
+                    <select
+                        :name="`education[${index}][result]`"
+                        x-model="edu.result"
+                        class="mt-1 w-full px-4 py-3 border rounded-lg">
+                        <option value="">Select</option>
+                        <option>First Class</option>
+                        <option>Second Class Upper</option>
+                        <option>Second Class Lower</option>
+                        <option>Pass</option>
+                        <option>Distinction</option>
+                    </select>
+                </div>
+
+                <!-- Remove -->
+                <button
+                    type="button"
+                    x-show="education.length > 1"
+                    @click="remove(index)"
+                    class="text-red-500 text-sm hover:underline">
+                    Remove Education
+                </button>
+            </div>
+        </template>
+
+        <!-- Add new -->
+        <button
+            type="button"
+            @click="add"
+            class="flex items-center gap-2 text-primary text-sm font-medium">
+            <i class="fa-solid fa-plus"></i>
+            Add New Educational History
         </button>
 
-        <div class="flex gap-4 pt-4">
-            <x-button type="button" class="w-full max-w-[14rem] border-[#33333333]" variant="outlined" onclick="prevStep()">
+        <!-- Actions -->
+        <div class="flex justify-end gap-6 pt-6 w-full">
+            <x-button
+                type="button"
+                variant="outlined"
+                class="w-full max-w-[14rem]"
+                onclick="prevStep()">
                 Back
             </x-button>
 
-            <x-button type="submit" class="w-full max-w-xs" variant="primary">
+            <x-button
+                type="submit"
+                variant="primary"
+                class="w-full max-w-xs">
                 Continue
             </x-button>
-
         </div>
     </form>
 </div>
 
 @push('scripts')
 <script>
-    let educationCount = 1;
+    function educationHistory() {
+        return {
+            education: [{
+                institution: '',
+                course: '',
+                location: '',
+                start_date: '',
+                end_date: '',
+                current: false,
+                result: '',
+            }],
 
-    function addEducation() {
-        const container = document.getElementById('educationContainer');
-        const newEntry = `
-        <div class="education-entry border-2 border-gray-200 rounded-xl p-6 mb-4">
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="font-semibold text-gray-800">Education #${educationCount + 1}</h4>
-                <button type="button" onclick="this.closest('.education-entry').remove()" class="text-red-500 hover:text-red-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Degree/Certification</label>
-                    <input type="text" name="education[${educationCount}][degree]" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Institution Name</label>
-                    <input type="text" name="education[${educationCount}][institution]" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Year</label>
-                        <input type="number" name="education[${educationCount}][start_year]" min="1950" max="2025" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">End Year</label>
-                        <input type="number" name="education[${educationCount}][end_year]" min="1950" max="2030" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                        <label class="flex items-center mt-2">
-                            <input type="checkbox" name="education[${educationCount}][is_current]" class="mr-2">
-                            <span class="text-sm text-gray-600">Currently studying</span>
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
-                    <input type="text" name="education[${educationCount}][field_of_study]" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                </div>
-            </div>
-        </div>
-    `;
-        container.insertAdjacentHTML('beforeend', newEntry);
-        educationCount++;
+            add() {
+                this.education.push({
+                    institution: '',
+                    course: '',
+                    location: '',
+                    start_date: '',
+                    end_date: '',
+                    current: false,
+                    result: '',
+                });
+            },
+
+            remove(index) {
+                this.education.splice(index, 1);
+            },
+        };
     }
 </script>
 @endpush

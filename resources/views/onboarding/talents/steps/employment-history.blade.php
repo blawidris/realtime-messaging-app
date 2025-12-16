@@ -1,127 +1,203 @@
 @section('title', 'Employment History - Remoteli')
 
-<div class="step">
-
-
-    <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Employment History</h2>
-        <p class="text-gray-500">Add your previous work experience.</p>
+<div
+    class="step mx-auto space-y-10"
+    x-data="employmentHistory()">
+    {{-- Header --}}
+    <div>
+        <h2 class="text-3xl font-medium text-black">
+            Employment History
+        </h2>
+        <p class="text-muted mt-1 text-base sm:text-lg">
+            Highlight your professional background to match the right opportunities.
+        </p>
     </div>
 
-    <form id="step4Form" method="POST" class="space-y-6" onsubmit="submitStep(event, 4); return false;">
+    <form
+        id="step4Form"
+        method="POST"
+        class="space-y-8"
+        @submit.prevent="submitStep(event, 4)">
         @csrf
 
-        <div id="employmentContainer">
-            <div class="employment-entry border-2 border-gray-200 rounded-xl p-6 mb-4">
-                <h4 class="font-semibold text-gray-800 mb-4">Employment #1</h4>
+        <!-- Employment entries -->
+        <template x-for="(job, index) in jobs" :key="index">
+            <div class="p-6 space-y-6">
 
-                <div class="space-y-4">
+                <!-- Grid: Role / Contract -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
-                        <input type="text" name="employment[0][job_title]"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
+                        <label class="text-sm text-muted">Role</label>
+                        <input
+                            type="text"
+                            :name="`employment[${index}][role]`"
+                            x-model="job.role"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-                        <input type="text" name="employment[0][company_name]"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                            <input type="month" name="employment[0][start_date]"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-                            <input type="month" name="employment[0][end_date]"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                            <label class="flex items-center mt-2">
-                                <input type="checkbox" name="employment[0][is_current]" class="mr-2">
-                                <span class="text-sm text-gray-600">Currently working here</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Responsibilities</label>
-                        <textarea name="employment[0][responsibilities]" rows="3"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"></textarea>
+                        <label class="text-sm text-muted">Employment Contract</label>
+                        <select
+                            :name="`employment[${index}][contract]`"
+                            x-model="job.contract"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+                            <option value="">Select</option>
+                            <option>Full-time</option>
+                            <option>Part-time</option>
+                            <option>Contract</option>
+                            <option>Freelance</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <button type="button" onclick="addEmployment()" class="w-full border-2 border-dashed border-gray-300 text-gray-600 font-semibold py-3 rounded-xl hover:border-blue-500 hover:text-blue-500 transition">
-            + Add Another Employment
+                <!-- Grid: Company / Location -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm text-muted">Company</label>
+                        <input
+                            type="text"
+                            :name="`employment[${index}][company]`"
+                            x-model="job.company"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-muted">Location</label>
+                        <select
+                            :name="`employment[${index}][location]`"
+                            x-model="job.location"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+                            <option value="">Select</option>
+                            <option>Remote</option>
+                            <option>Onsite</option>
+                            <option>Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm text-muted">Start Date</label>
+                        <input
+                            type="month"
+                            :name="`employment[${index}][start_date]`"
+                            x-model="job.start_date"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-muted">End Date</label>
+                        <input
+                            type="month"
+                            :name="`employment[${index}][end_date]`"
+                            x-model="job.end_date"
+                            :disabled="job.current"
+                            class="mt-1 w-full px-4 py-3 border rounded-lg disabled:bg-gray-100">
+
+                        <label class="flex items-center gap-2 mt-2 text-sm text-muted">
+                            <input
+                                type="checkbox"
+                                :name="`employment[${index}][current]`"
+                                x-model="job.current">
+                            This is my current employer
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="text-sm text-muted">
+                        Description and Responsibilities
+                    </label>
+
+                    <textarea
+                        rows="4"
+                        :name="`employment[${index}][description]`"
+                        x-model="job.description"
+                        placeholder="Enter Text Here..."
+                        class="mt-2 w-full px-4 py-3 border rounded-lg resize-none" id="quill-editor"></textarea>
+
+                    <div class="text-right text-xs text-gray-400 mt-1">
+                        <span x-text="job.description.length"></span>/200 Characters
+                    </div>
+                </div>
+
+                <!-- Remove -->
+                <button
+                    type="button"
+                    x-show="jobs.length > 1"
+                    @click="remove(index)"
+                    class="text-red-500 text-sm hover:underline">
+                    Remove Employment
+                </button>
+            </div>
+        </template>
+
+        <!-- Add new -->
+        <button
+            type="button"
+            @click="add"
+            class="flex items-center gap-2 text-primary text-sm font-medium">
+            <i class="fa-solid fa-plus"></i>
+            Add New Employment History
         </button>
 
-        <div class="flex gap-4 pt-4">
-            <x-button type="button" class="w-full max-w-[14rem] border-[#33333333]" variant="outlined" onclick="prevStep()">
+        <!-- Actions -->
+        <div class="flex justify-end gap-6 pt-6 w-full">
+            <x-button
+                type="button"
+                variant="outlined"
+                class="w-full max-w-[14rem]"
+                onclick="prevStep()">
                 Back
             </x-button>
-            <x-button type="submit" class="w-full max-w-xs" variant="primary">
+
+            <x-button
+                type="submit"
+                variant="primary"
+                class="w-full max-w-xs">
                 Continue
             </x-button>
         </div>
     </form>
 </div>
 
+
 @push('scripts')
 <script>
-    let employmentCount = 1;
+    function employmentHistory() {
+        return {
+            jobs: [{
+                role: '',
+                contract: '',
+                company: '',
+                location: '',
+                start_date: '',
+                end_date: '',
+                current: false,
+                description: '',
+            }],
 
-    function addEmployment() {
-        const container = document.getElementById('employmentContainer');
-        const newEntry = `
-        <div class="employment-entry border-2 border-gray-200 rounded-xl p-6 mb-4">
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="font-semibold text-gray-800">Employment #${employmentCount + 1}</h4>
-                <button type="button" onclick="this.closest('.employment-entry').remove()" class="text-red-500 hover:text-red-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
-                    <input type="text" name="employment[${employmentCount}][job_title]" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-                    <input type="text" name="employment[${employmentCount}][company_name]" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                        <input type="month" name="employment[${employmentCount}][start_date]" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-                        <input type="month" name="employment[${employmentCount}][end_date]" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
-                        <label class="flex items-center mt-2">
-                            <input type="checkbox" name="employment[${employmentCount}][is_current]" class="mr-2">
-                            <span class="text-sm text-gray-600">Currently working here</span>
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Responsibilities</label>
-                    <textarea name="employment[${employmentCount}][responsibilities]" rows="3" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"></textarea>
-                </div>
-            </div>
-        </div>
-    `;
-        container.insertAdjacentHTML('beforeend', newEntry);
-        employmentCount++;
+            add() {
+                this.jobs.push({
+                    role: '',
+                    contract: '',
+                    company: '',
+                    location: '',
+                    start_date: '',
+                    end_date: '',
+                    current: false,
+                    description: '',
+                });
+            },
+
+            remove(index) {
+                this.jobs.splice(index, 1);
+            },
+        };
     }
+
+    quillEditor();
 </script>
 @endpush

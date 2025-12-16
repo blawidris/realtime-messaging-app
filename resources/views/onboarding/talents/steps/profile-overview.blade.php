@@ -2,14 +2,14 @@
 
 
 <div
-    class="step max-w-4xl mx-auto"
+    class="step max-w-5xl mx-auto"
     x-data="profileOverview()">
     {{-- Header --}}
     <div class="mb-10">
         <h2 class="text-3xl font-semibold text-black">
             Profile Overview
         </h2>
-        <p class="text-gray-500 mt-1">
+        <p class="text-muted text-base sm:text-lg mt-1">
             Upload a profile image, highlight your language skills, and craft a compelling summary about yourself.
         </p>
     </div>
@@ -41,14 +41,6 @@
                             alt="Upload"
                             class="w-10 opacity-60">
                     </template>
-
-                    <!-- Upload trigger -->
-                    <!-- <button
-                        type="button"
-                        @click="$refs.photoInput.click()"
-                        class="absolute -bottom-2 -right-2 w-full h-full rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100 transition">
-                        <i class="fa-solid fa-camera text-gray-600 text-sm"></i>
-                    </button> -->
                 </div>
 
                 <!-- Delete button -->
@@ -74,7 +66,7 @@
 
         {{-- Short Headline --}}
         <div class="p-5">
-            <div class="inline-flex gap-1">
+            <div class="inline-flex gap-1 mb-2">
                 <label class="text-sm font-medium text-muted">
                     Add a Short Headline
                 </label>
@@ -82,7 +74,7 @@
             </div>
 
 
-            <div class="relative border border-[#EBEDF0] rounded-lg px-4 flex flex-col-reverse">
+            <div class="relative border border-[#EBEDF0] rounded-lg flex flex-col-reverse">
                 <span class="text-xs text-muted absolute bottom-2 right-4">
                     <span x-text="headline.length"></span>/50 Characters
                 </span>
@@ -92,7 +84,7 @@
                     maxlength="50"
                     x-model="headline"
                     placeholder="e.g. Senior Software Engineer"
-                    class="w-full border-0 focus:ring-0 outline-0 focus:outline-0 text-black placeholder-muted py-3">
+                    class="w-full px-4 border-0 focus:ring-0 outline-0 focus:outline-0 text-black placeholder-muted py-3">
             </div>
         </div>
 
