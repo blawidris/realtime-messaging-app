@@ -199,4 +199,9 @@ class PageController extends Controller
     public function setting(){
         return view("settings.index");
     }
+
+
+    public function messaging(){
+        return view("messaging.index");
+    }
 }
