@@ -9,12 +9,12 @@ use Illuminate\View\Component;
 class Tabs extends Component
 {
 
-    public $active;
 
-    public function __construct($active = null)
-    {
-        $this->active = $active;
-    }
+    public function __construct(
+        public ?string $active = null,
+        public string $variant = 'default',
+        public string $direction = 'horizontal',
+    ) {}
 
     public function render(): View|Closure|string
     {

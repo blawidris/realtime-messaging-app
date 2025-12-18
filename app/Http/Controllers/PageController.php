@@ -194,4 +194,9 @@ class PageController extends Controller
             'step' => $step + 1,
         ]);
     }
+
+
+    public function setting(){
+        return view("settings.index");
+    }
 }

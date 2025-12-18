@@ -100,7 +100,7 @@
 
         <x-ui.tab-group active="upcoming">
 
-            <x-ui.tabs>
+            <x-ui.tabs class="mb-10">
                 <x-ui.tab name="upcoming">Upcoming payments</x-ui.tab>
                 <x-ui.tab name="past">Past payment</x-ui.tab>
                 <x-ui.tab name="methods">Payment Methods</x-ui.tab>

@@ -73,6 +73,7 @@
                         </div>
                         <p class="text-red-500 text-xs mt-1 h-4"></p>
                     </div>
+
                     <button id="submit-btn" type="submit" disabled class="mt-4 w-full py-3 bg-gradient-to-r from-[#68A3FF] to-primary text-white rounded-xl font-semibold shadow hover:opacity-90 transition col-span-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         Create Account
                     </button>
